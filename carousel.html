@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>carousel</title>
+    <style>
+      .slider-container {
+        width: 300px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .slider {
+        display: flex;
+        transition: transform 0.3s ease;
+      }
+
+      .slide {
+        min-width: 100%;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f0f0;
+      }
+
+      button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+
+      .prev {
+        left: 10px;
+      }
+      .next {
+        right: 10px;
+      }
+
+      /* 두 번째 슬라이드 */
+      .slider-container2 {
+        width: 300px;
+        overflow: hidden;
+        position: relative;
+        padding-top: 50px;
+      }
+
+      .slider2 {
+        display: flex;
+        transition: transform 0.3s ease;
+      }
+
+      .slide2 {
+        min-width: 100%;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f0f0;
+      }
+
+      button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+
+      .prev2 {
+        left: 10px;
+      }
+      .next2 {
+        right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slider-container">
+      <div class="slider">
+        <div class="slide">1</div>
+        <div class="slide">2</div>
+        <div class="slide">3</div>
+      </div>
+      <button class="prev">이전</button>
+      <button class="next">다음</button>
+    </div>
+
+    <!-- 두 번째 슬라이드(auto) -->
+    <div class="slider-container2">
+      <div class="slider2">
+        <div class="slide2">1</div>
+        <div class="slide2">2</div>
+        <div class="slide2">3</div>
+      </div>
+      <button class="prev2">이전</button>
+      <button class="next2">다음</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const slider = document.querySelector('.slider');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+
+        let currentIndex = 0;
+
+        // 처음과 끝에 슬라이드 복제
+        const firstClone = slides[0].cloneNode(true);
+        const lastClone = slides[slides.length - 1].cloneNode(true);
+        slider.appendChild(firstClone);
+        slider.insertBefore(lastClone, slides[0]);
+
+        // 초기 위치 설정
+        slider.style.transform = `translateX(-${100}%)`;
+
+        const moveSlide = direction => {
+          currentIndex += direction;
+          slider.style.transition = 'transform 0.3s ease';
+          slider.style.transform = `translateX(-${(currentIndex + 1) * 100}%)`;
+
+          // 무한 슬라이드 처리
+          if (currentIndex === slides.length) {
+            setTimeout(() => {
+              slider.style.transition = 'none';
+              currentIndex = 0;
+              slider.style.transform = `translateX(-${100}%)`;
+            }, 300);
+          } else if (currentIndex === -1) {
+            setTimeout(() => {
+              slider.style.transition = 'none';
+              currentIndex = slides.length - 1;
+              slider.style.transform = `translateX(-${slides.length * 100}%)`;
+            }, 300);
+          }
+        };
+
+        prevBtn.addEventListener('click', () => moveSlide(-1));
+        nextBtn.addEventListener('click', () => moveSlide(1));
+      });
+
+      // 두 번째 슬라이드(auto)
+      document.addEventListener('DOMContentLoaded', () => {
+        const slider = document.querySelector('.slider2');
+        const slides = document.querySelectorAll('.slide2');
+        const prevBtn = document.querySelector('.prev2');
+        const nextBtn = document.querySelector('.next2');
+
+        let currentIndex = 0;
+        let autoSlideInterval;
+
+        // 처음과 끝에 슬라이드 복제
+        const firstClone = slides[0].cloneNode(true);
+        const lastClone = slides[slides.length - 1].cloneNode(true);
+        slider.appendChild(firstClone);
+        slider.insertBefore(lastClone, slides[0]);
+
+        // 초기 위치 설정
+        slider.style.transform = `translateX(-${100}%)`;
+
+        const moveSlide = direction => {
+          currentIndex += direction;
+          slider.style.transition = 'transform 0.3s ease';
+          slider.style.transform = `translateX(-${(currentIndex + 1) * 100}%)`;
+
+          // 무한 슬라이드 처리
+          if (currentIndex === slides.length) {
+            setTimeout(() => {
+              slider.style.transition = 'none';
+              currentIndex = 0;
+              slider.style.transform = `translateX(-${100}%)`;
+            }, 300);
+          } else if (currentIndex === -1) {
+            setTimeout(() => {
+              slider.style.transition = 'none';
+              currentIndex = slides.length - 1;
+              slider.style.transform = `translateX(-${slides.length * 100}%)`;
+            }, 300);
+          }
+        };
+
+        // 자동 슬라이드 시작 함수
+        const startAutoSlide = () => {
+          autoSlideInterval = setInterval(() => {
+            moveSlide(1);
+          }, 3000);
+        };
+
+        // 자동 슬라이드 정지 함수
+        const stopAutoSlide = () => {
+          clearInterval(autoSlideInterval);
+        };
+
+        // 자동 슬라이드 시작
+        startAutoSlide();
+
+        // 버튼 클릭 이벤트
+        prevBtn.addEventListener('click', () => {
+          moveSlide(-1);
+          stopAutoSlide();
+          startAutoSlide();
+        });
+
+        nextBtn.addEventListener('click', () => {
+          moveSlide(1);
+          stopAutoSlide();
+          startAutoSlide();
+        });
+
+        // 마우스 이벤트
+        slider.addEventListener('mouseenter', stopAutoSlide);
+        slider.addEventListener('mouseleave', startAutoSlide);
+      });
+    </script>
+  </body>
+</html>
